@@ -55,6 +55,31 @@ def pe_counts(user):
         return response['content']
 
 
+
+def phylab(db,user):
+    response = get_api_return('phylab',user)
+    msg = u''
+    if response['code'] ==200:
+        content = response['content']
+        for labType in content:
+            if labType!='':
+                msg +=u'%s:\n' %labType
+                for lab in labType:
+                    msg +=u'名称:%s\n' %lab['name']
+                    msg +=u'老师:%s\n' %lab['Teacher']
+                    msg +=u'时间:%s %s\n' %(lab['Date'],lab['Day'])
+                    msg +=u'地点:%s\n' %lab['Address']
+                msg +=u'\n\n'
+        if not msg:
+            msg = u'没有物理实验哦'
+        return msg
+    else:
+        return response['content']          
+
+
+
+
+
 def rendered(user):
     response = get_api_return('library', user)
     msg = u''
@@ -118,6 +143,12 @@ def srtp(db, user):
             LOCAL, user.openid)
     finally:
         return msg
+
+
+
+
+
+
 
 def lecture(user):
     response = get_api_return('lecture', user)
