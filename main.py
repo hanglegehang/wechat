@@ -77,6 +77,7 @@ class WechatHandler(tornado.web.RequestHandler):
             'nic': self.nic,
             'card': self.card,
             'lecture': self.lecture,
+            'eat':self.eat,
             'nothing': self.nothing
         }
 
@@ -218,7 +219,10 @@ class WechatHandler(tornado.web.RequestHandler):
         msg = get.nic(user)
         self.write(self.wx.response_text_msg(msg))
 
-
+    #东门小吃预报
+    def eat(self,user):
+        msg = get.eat()
+        self.write(self.wx.response_text_msg(msg))
 
     # 其他
     def change_user(self, user):
