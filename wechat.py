@@ -136,8 +136,6 @@ class Message(object):
             return 'help'
         elif u'怎么用' in content:
             return 'help'
-        elif u'东门小吃' in content:
-            return 'eat'
         else:
             return 'nothing'
 
