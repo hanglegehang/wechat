@@ -80,10 +80,7 @@ class Message(object):
         except:
             return u''
 
-    @property
-    def content(self):
-        content = self.msg.get('Content', None)
-
+    def content_key(self,content):
         key={
             'help' : {'first':'', 'content': [u'怎么用' , u'怎么使用',u'说明']},
             'change-user': {'first':'', 'content': [u'改变用户',u'重新',u'绑定']},
@@ -110,7 +107,8 @@ class Message(object):
         ticket = [
             u'抢票测试'
         ]
-
+        if not content:
+            return 'nothing'
         if content in ticket:
             self.ticket_type = ticket.index(content) + 1
             return 'ticket'
@@ -120,7 +118,6 @@ class Message(object):
             return 'dm'
         if u'宿舍' in content:
             return 'room'
-
         for func in key:
             try:
                 if key[func]['first'] in content:
@@ -132,6 +129,15 @@ class Message(object):
                         if k in content:
                               return func
         return 'nothing'
+
+    @property
+    def content(self):
+        content = self.msg.get('Content', None)
+        return content
+
+    @property
+    def voice_content(self):
+        return self.msg.get('Recognition',None)
 
     @property
     def openid(self):

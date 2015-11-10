@@ -104,7 +104,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.db.close()
 
     def get(self):
-        self.wx = wechat.Message(token='bright')
+        self.wx = wechat.Message(token='LiangJ')
         if self.wx.check_signature(self.get_argument('signature', default=''),
                                    self.get_argument('timestamp', default=''),
                                    self.get_argument('nonce', default='')):
@@ -114,12 +114,12 @@ class WechatHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def post(self):
-        self.wx = wechat.Message(token='bright')
+        self.wx = wechat.Message(token='LiangJ')
         s = self.wx.check_signature(self.get_argument('signature', default=''),
                                    self.get_argument('timestamp', default=''),
                                    self.get_argument('nonce', default=''))
-        with open("/var/tmp/t",'w+') as f:
-            f.write(s+'\n\n')
+        # with open("/var/tmp/t",'w+') as f:
+        #     f.write(s+'\n\n')
         if self.wx.check_signature(self.get_argument('signature', default=''),
                                    self.get_argument('timestamp', default=''),
                                    self.get_argument('nonce', default='')):
@@ -134,7 +134,7 @@ class WechatHandler(tornado.web.RequestHandler):
                         user = self.db.query(User).filter(
                             User.openid == self.wx.openid).one()
                         if user.state == 0:
-                            self.unitsmap[self.wx.content](user)
+                            self.unitsmap[self.wx.content_key(self.wx.content)](user)
                         elif user.state == 1:
                             self.simsimi(self.wx.raw_content, user)
                     except NoResultFound:
@@ -156,12 +156,25 @@ class WechatHandler(tornado.web.RequestHandler):
                             u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
                                 LOCAL, self.wx.openid)))
                         self.finish()
+                elif self.wx.msg_type == 'voice':
+                    try:
+                        user = self.db.query(User).filter(
+                            User.openid == self.wx.openid).one()
+                        if user.state == 0:
+                            self.unitsmap[self.wx.content_key(self.wx.voice_content)](user)
+                        elif user.state == 1:
+                            self.simsimi(self.wx.voice_content, user)
+                    except NoResultFound:
+                        self.write(self.wx.response_text_msg(
+                            u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
+                                LOCAL, self.wx.openid)))
+                        self.finish()
                 else:
                     self.write(self.wx.response_text_msg(u'??'))
                     self.finish()
             except:
                 with open('wechat_error.log','a+') as f:
-                    f.write(strftime('%Y%m%d %H:%M:%S in [wechat]', localtime(time()))+'\n'+str(sys.exc_info()[0])+str(sys.exc_info()[1])+'\n\n')
+                    f.write(strftime('%Y%m%d %H:%M:%S in [wechat]', localtime(time()))+'\n'+str(sys.exc_info()[0])+'\n'+typelog+‘'\n'+str(sys.exc_info()[1])+'\n\n')
                 self.write(self.wx.response_text_msg(u'小猴正在自我改良中～稍候再试， 么么哒！'))
                 self.finish()
         else:
