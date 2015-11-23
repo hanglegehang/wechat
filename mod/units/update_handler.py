@@ -50,7 +50,8 @@ class UpdateHandler(tornado.web.RequestHandler):
                     try:
                         db.commit()
                         self.write(TEMPLATE.format(content=u'更新好啦'))
-                    except:
+                    except Exception,e:
+                        # print 'update'+str(e)
                         db.rollback()
                         self.write(TEMPLATE.format(content=u'T T 出了点小问题'))
                 else:

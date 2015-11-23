@@ -27,6 +27,7 @@ class RenewHandler(tornado.web.RequestHandler):
             response = get_api_return('renew', user, data)
 
             if response['code'] == 200:
+                
                 if response['content'] == 'success':
                     self.write(TEMPLATE.format(content='续借成功'))
                 else:

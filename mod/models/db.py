@@ -3,8 +3,8 @@
 # @Author  : xindervella@gamil.com
 
 DB_HOST = '127.0.0.1'
-DB_USER = ''
-DB_PWD = ''
+DB_USER = 'root'
+DB_PWD = '084358'
 DB_NAME = 'herald_wechat2'
 
 from sqlalchemy import create_engine

@@ -7,7 +7,7 @@ DEFAULT_UUID = ''
 
 AUTH = ''
 SERVICE = ''
-LOCAL = u'http://115.28.27.150/wechat2'
+LOCAL = u''
 
 
 

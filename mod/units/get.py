@@ -6,14 +6,20 @@ from sqlalchemy.sql import or_
 from ..models.course import Course
 from ..models.gpa import Overview as GPAO
 from ..models.srtp import Overview as SRTPO
+from ..models.lecturedb import LectureDB
 # from ..models.eat import Eat
 from weekday import today, tomorrow, changedate, ismorning
 from config import LOCAL,SERVICE,TIME_OUT
 from get_api_return import get_api_return
 import urllib
 import json
-import re
-import datetime,time
+import re,traceback
+import datetime,time,sys
+from time import strftime, mktime, localtime, strptime
+
+from sqlalchemy.orm.exc import NoResultFound
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def curriculum(db, user, day):
     courses = db.query(Course).filter(
@@ -53,6 +59,7 @@ def pe_counts(user):
     response = get_api_return('pe', user)
     if response['code'] == 200:
         msg += u'当前跑操次数 %s 次' % response['content']
+        msg += u'\n距离跑操结束(16周周五)还有%s天' % str(response['remain'])
     else:
         msg += response['content']
     if ismorning():
@@ -60,7 +67,7 @@ def pe_counts(user):
         if response['code'] == 201:
             msg += u'\n\n0.0, 早起有益健康，小猴正在获取跑操情报，等会再试试'
         else:
-            msg += u'\n\n小猴猜测' + response['content']
+            msg += u'\n\n小猴猜测：' + response['content']
     return msg
 
 def phylab(user):
@@ -167,10 +174,12 @@ def srtp(db, user):
         overview = db.query(SRTPO).filter(
             SRTPO.openid == user.openid).one()
         msg += u'总分：%s\n成绩：%s\n\n' % (
-            overview.total, overview.score)
+            overview.total, overview.score.decode('utf-8').encode('utf-8'))
         msg += u'<a href="%s/srtp/%s">SRTP详情</a>' % (
             LOCAL, user.openid)
-    except:
+    except Exception,e:
+        print str(e)
+        print traceback.print_exc()
         msg += u'<a href="%s/register/%s">=。= 同学，你不是把学号填错了吧，快点我修改。</a>还是没有更新过SRTP？快点上方的更新吧。' % (
             LOCAL, user.openid)
     finally:
@@ -196,8 +205,29 @@ def lecture(user):
     else:
         return response['content']
 
-def lecturenotice(user):
-    response = get_api_return('lecturenotice', user)
+def lecturenotice(db,user):
+    retjson = {'code':500, 'content':u'暂无'}
+    date = mktime(strptime(strftime('%Y-%m-%d' ,localtime(time.time())), '%Y-%m-%d'))
+
+    # read from db
+    try:
+        status = db.query(LectureDB).filter( LectureDB.date >=  date ).all()
+        if len(status) > 0:
+            ret = []
+            for l in status:
+                ret.append({
+                    'date': l.time,
+                    'topic': l.topic,
+                    'speaker': l.speaker,
+                    'location': l.location,
+                    'detail': l.detail
+                    })
+            retjson['code'] = 200
+            retjson['content'] = ret
+    except NoResultFound:
+        pass
+    # response = get_api_return('lecturenotice', user)
+    response = retjson
     if response['code'] == 500:
         return lecture(user)
     else:
@@ -272,18 +302,19 @@ def searchlib(user, text):
 
 def schoolbus(user):
     response = get_api_return('schoolbus', user)
+    daymap = {'Mon':u'周一', 'Tue':u'周二', 'Wed':u'周三', 'Thu':u'周四', 'Fri':u'周五', 'Sat':u'周六', 'Sun':u'周日'}
     if response['code'] == 200:
         if today() in ['Sat', 'Sun']:
             ret = response['content']['weekend']
         else:
             ret = response['content']['weekday']
-        msg = u'Tips:\n到地铁站时，乘车途中只上不下。到九龙湖时，乘车途中只下不上\n'
-        msg += u'出九龙湖路线：\n校内停车场-->材料学院、图书馆-->文学院-->西门\n-->橘园-->行政楼-->电工电子\n-->梅园-->教八-->北门-->地铁停靠站'
-        msg += u'\n前往九龙湖:\n'
-        for m in ret[u'进九龙湖']:
+        msg = u'Tips:\n今天%s\n到地铁站时，乘车途中只上不下。到九龙湖时，乘车途中只下不上\n' % daymap[today()]
+        # msg += u'出九龙湖路线：\n校内停车场-->材料学院、图书馆-->文学院-->西门\n-->橘园-->行政楼-->电工电子\n-->梅园-->教八-->北门-->地铁停靠站'
+        msg += u'\n前往地铁站:\n'
+        for m in ret[u'前往地铁站']:
             msg += u'[%s] - %s\n' % ( m['time'], m['bus'] )
-        msg += u'\n九龙湖返回:\n'
-        for m in ret[u'出九龙湖']:
+        msg += u'\n返回九龙湖:\n'
+        for m in ret[u'返回九龙湖']:
             msg += u'[%s] - %s\n' % ( m['time'], m['bus'] )
         return msg[:-1]
     else:

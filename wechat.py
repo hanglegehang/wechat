@@ -101,7 +101,8 @@ class Message(object):
             'schoolbus':{'first':'', 'content': [u'校车']},
             'phylab':{'first':'', 'content': [u'物理',u'实验']},
             'quanyi':{'first':'', 'content': [u'权益']},
-            'yuyue':{'first':'','content':[u'预约']}
+            'yuyue':{'first':'','content':[u'预约']},
+            'xiaoli':{'first':'','content':[u'校历']}
             }
 
         ticket = [

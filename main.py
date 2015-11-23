@@ -97,6 +97,7 @@ class WechatHandler(tornado.web.RequestHandler):
             'dm':self.dm,
             'room':self.room,
             'yuyue':self.yuyue,
+            'xiaoli':self.xiaoli,
             'nothing': self.nothing
         }
 
@@ -174,7 +175,7 @@ class WechatHandler(tornado.web.RequestHandler):
                     self.finish()
             except:
                 with open('wechat_error.log','a+') as f:
-                    f.write(strftime('%Y%m%d %H:%M:%S in [wechat]', localtime(time()))+'\n'+str(sys.exc_info()[0])+'\n'+typelog+‘'\n'+str(sys.exc_info()[1])+'\n\n')
+                    f.write(strftime('%Y%m%d %H:%M:%S in [wechat]', localtime(time()))+'\n'+str(sys.exc_info()[0])+'\n'+typelog+'\n'+str(sys.exc_info()[1])+'\n\n')
                 self.write(self.wx.response_text_msg(u'小猴正在自我改良中～稍候再试， 么么哒！'))
                 self.finish()
         else:
@@ -336,7 +337,9 @@ class WechatHandler(tornado.web.RequestHandler):
         msg = get.yuyue(user)
         self.write(self.wx.response_text_msg(msg))
         self.finish()
-
+    def xiaoli(self,user):
+        self.write(self.wx.response_pic_msg(u'校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
+        self.finish()
 
     # 其他
     def change_user(self, user):
