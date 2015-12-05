@@ -98,6 +98,7 @@ class WechatHandler(tornado.web.RequestHandler):
             'room':self.room,
             'yuyue':self.yuyue,
             'xiaoli':self.xiaoli,
+            'exam':self.exam,
             'nothing': self.nothing
         }
 
@@ -341,6 +342,10 @@ class WechatHandler(tornado.web.RequestHandler):
         self.write(self.wx.response_pic_msg(u'校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
         self.finish()
 
+    def exam(self,user):
+        msg = get.exam(user)
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
     # 其他
     def change_user(self, user):
         msg = u'当前用户为：%s \n\n\n<a href="%s/register/%s">点击重新绑定</a>' % (

@@ -94,6 +94,24 @@ def phylab(user):
         return u"正在获取最新数据，再点一次就有啦！"
     else:
         return response['content']
+def exam(user):
+    response = get_api_return('exam',user)
+    if response['code'] == 200:
+        msg = ''
+        content = response['content']
+        for item in content:
+            msg += u'> %s\n' % item['course']
+            msg += u'%s    %s分钟\n' % (item['teacher'],item['hour'])
+            msg += u'%s\n' % item['location']
+            msg += u'%s\n' % item['time']
+        if not msg:
+            msg = u'没有查询到考试安排哦'
+        return msg
+    elif response['code'] == 599:
+        return u"正在获取最新数据，再点一次就有啦！"
+    else:
+        return response['content']
+
 
 def room(user):
         response = get_api_return('room',user)
@@ -265,6 +283,9 @@ def card(user):
         return u"正在获取最新数据，再点一次就有啦！"
     else:
         return response['content']
+
+
+
 
 def jwc(user):
     response = get_api_return('jwc', user)
