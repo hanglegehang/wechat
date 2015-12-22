@@ -103,7 +103,9 @@ class Message(object):
             'quanyi':{'first':'', 'content': [u'权益']},
             'yuyue':{'first':'','content':[u'预约']},
             'xiaoli':{'first':'','content':[u'校历']},
-            'exam':{'first':'','content':[u'考试安排']}
+            'exam':{'first':'','content':[u'考试安排']},
+            'feedback':{'first':'','content':[u'反馈']},
+            'tice':{'first':'','content':[u'体测',u'体测成绩',u'体育成绩']}
             }
 
         ticket = [

@@ -99,6 +99,8 @@ class WechatHandler(tornado.web.RequestHandler):
             'yuyue':self.yuyue,
             'xiaoli':self.xiaoli,
             'exam':self.exam,
+            'feedback':self.feedback,
+            'tice':self.tice,
             'nothing': self.nothing
         }
 
@@ -346,10 +348,19 @@ class WechatHandler(tornado.web.RequestHandler):
         msg = get.exam(user)
         self.write(self.wx.response_text_msg(msg))
         self.finish()
+    def feedback(self,user):
+        msg = u'\n<a href="http://115.28.27.150/service/feedback">点我进行反馈哦~</a>'
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
+    def tice(self,user):
+        msg = get.tice(user)
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
     # 其他
     def change_user(self, user):
         msg = u'当前用户为：%s \n\n\n<a href="%s/register/%s">点击重新绑定</a>' % (
             user.cardnum, LOCAL, self.wx.openid)
+        msg += u'\n<a href="http://115.28.27.150/service/feedback">点我进行反馈哦~</a>'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
@@ -359,7 +370,9 @@ class WechatHandler(tornado.web.RequestHandler):
         self.finish()
 
     def nothing(self, user):
-        msg = u'无法识别命令.\n想要调戏小猴别忘了点一下[调戏]\n想要找图书前面别忘了加上"ss"\n么么哒'
+        msg = u'无法识别命令.\n想要调戏小猴别忘了点一下[调戏]\n想要找图书前面别忘了加上"ss"'
+        msg += u'\n<a href="http://115.28.27.150/service/feedback">点我进行反馈哦~</a>'
+        msg += u'\n么么哒'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 

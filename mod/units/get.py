@@ -112,7 +112,24 @@ def exam(user):
     else:
         return response['content']
 
-
+def tice(user):
+    response = get_api_return('tice',user)
+    if response['code'] == 200:
+        msg = ''
+        content = response['content']
+        msg += u'总成绩:  %s\n' % content['score']
+        msg += u'>身高,体重:  %s %s\n' %(content['height'],content['weight'])
+        msg += u'>立定跳远: %s %s\n' % (content['jump']['comment'],content['jump']['value'])
+        msg += u'>坐位体前屈: %s %s\n' % (content['zuoqian']['comment'],content['zuoqian']['value'])
+        msg += u'>50米: %s %s\n' % (content['50meter']['comment'],content['50meter']['value'])
+        msg += u'>1000(800)米: %s %s\n' % (content['1000meter']['comment'],content['1000meter']['value'])
+        msg += u'>肺活量: %s %s\n' % (content['fei']['comment'],content['fei']['value'])
+        msg += u'>仰卧起坐(引体向上): %s %s\n' % (content['up-down']['comment'],content['up-down']['value'])
+        return msg
+    elif response['code'] == 599:
+        return u"正在获取最新数据，再点一次就有啦！"
+    else:
+        return response['content']
 def room(user):
         response = get_api_return('room',user)
         msg = u''
