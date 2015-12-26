@@ -377,9 +377,7 @@ def schoolbus(user):
 
 
 def yuyue(user):
-    msg = u'<a href="%s/yuyue/%s">点我进行预约</a>' %('http://herald.seu.edu.cn/wechat2', user.openid)
-    # msg = u'<a href="%s/yuyue/%s">点我进行预约</a>' %('http://8545ebd1.ngrok.io/wechat2', user.openid)
-
+    msg = u'<a href="http://115.28.27.150/heraldapp/#/yuyue/home">点我进行预约</a>'
     return msg
 
 

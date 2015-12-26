@@ -371,6 +371,7 @@ class WechatHandler(tornado.web.RequestHandler):
 
     def nothing(self, user):
         msg = u'无法识别命令.\n想要调戏小猴别忘了点一下[调戏]\n想要找图书前面别忘了加上"ss"'
+        msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=402080773&idx=1&sn=328ae46e08271a42c67488921b39dc9b#rd">点我查看功能列表</a>'
         msg += u'\n<a href="http://115.28.27.150/service/feedback">点我进行反馈哦~</a>'
         msg += u'\n么么哒'
         self.write(self.wx.response_text_msg(msg))
