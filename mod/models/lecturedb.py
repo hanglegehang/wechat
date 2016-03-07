@@ -17,3 +17,10 @@ class LectureDB(Base):
     location = Column(String(256))
     topic = Column(String(256))
     detail = Column(String(256))
+
+def create_all():
+    Base.metadata.create_all(engine)
+
+
+if __name__ == '__main__':
+    create_all()

@@ -21,6 +21,7 @@ from mod.units.weekday import today, tomorrow
 from mod.units.config import LOCAL
 from mod.units.ticket_handler import ticket_handler
 from mod.units.yuyue_handler import yuyueHandler
+from mod.lecture.handler import LectureHandler
 import tornado.web
 import tornado.ioloop
 import tornado.httpserver
@@ -47,6 +48,7 @@ class Application(tornado.web.Application):
             (r'/wechat2/srtp/([\S]+)', SRTPHandler),
             (r'/wechat2/update/([\S]+)/([\S]+)', UpdateHandler),
             (r'/wechat2/yuyue/([\S]+)',yuyueHandler),
+            (r'/wechat2/lecture',LectureHandler),
 
         ]
         settings = dict(
