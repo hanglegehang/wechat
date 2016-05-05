@@ -60,6 +60,8 @@ def pe_counts(user):
     if response['code'] == 200:
         msg += u'当前跑操次数 %s 次' % response['content']
         msg += u'\n距离跑操结束(16周周五)还有%s天' % str(response['remain'])
+        msg += u'\n<a href="%s/pedetail/%s">跑操明细</a>' % (
+            LOCAL, user.openid)
     else:
         msg += response['content']
     if ismorning():
@@ -68,6 +70,8 @@ def pe_counts(user):
             msg += u'\n\n0.0, 早起有益健康，小猴正在获取跑操情报，等会再试试'
         else:
             msg += u'\n\n小猴猜测：' + response['content']
+    msg += u'\n输入[预约]预约场馆'
+    msg += u'\n输入[体测]查看体测成绩'
     return msg
 
 def phylab(user):
@@ -234,6 +238,7 @@ def lecture(user):
         for d in ret['detial']:
             msg += u"%s\n%s\n\n"%(d['date'], d['place'])
         msg += u'当前人文讲座次数 %s 次' % ret['count']
+        msg += u'\n<a href="http://115.28.27.150/wechat2/lecturequery">点我查询讲座信息~</a>'
         return msg
     elif response['code'] == 599:
         return u"正在获取最新数据，再点一次就有啦！"
@@ -272,6 +277,7 @@ def lecturenotice(db,user):
             msg += u"> %s\n> %s\n"%(lec['date'], lec['location'])
             msg += u'<a href="%s#%s">戳我查看详细信息</a>\n\n'%(lec['detail'],lec['topic'])
         msg += u"查询讲座次数请在非调戏状态输入[讲座次数]"
+        msg += u'\n<a href="http://115.28.27.150/wechat2/lecturequery">点我查询讲座信息~</a>'
         return msg
 
 def nic(user):
@@ -295,6 +301,8 @@ def card(user):
         msg = u'一卡通余额:%s' % ret['left']
         msg += u'\n\n<a href="%s/card/%s">一卡通交易明细</a>' % (
             LOCAL, user.openid)
+        msg += u"\n\n<a href='http://58.192.115.47:8088/wechat-web/login/dologin.html'>点我进行充值</a>"
+        msg += u"(微信充值后需到食堂pos机上刷卡写卡，或在圈存机上领取补助、转账写卡)"
         return msg
     elif response['code'] == 599:
         return u"正在获取最新数据，再点一次就有啦！"

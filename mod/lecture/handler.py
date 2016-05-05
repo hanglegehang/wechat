@@ -38,7 +38,3 @@ class LectureHandler(tornado.web.RequestHandler):
         except Exception,e:
             print str(e)
             retjson['code'] = 500
-            retjson['content'] = 'error'
-        ret = json.dumps(retjson, ensure_ascii=False, indent=2)
-        self.write(ret)
-        self.finish()

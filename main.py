@@ -20,8 +20,9 @@ from mod.models.user import User
 from mod.units.weekday import today, tomorrow
 from mod.units.config import LOCAL
 from mod.units.ticket_handler import ticket_handler
-from mod.units.yuyue_handler import yuyueHandler
 from mod.lecture.handler import LectureHandler
+from mod.units.lecture import LectureQueryHandler
+from mod.units.pe_handler import PeDetailHandler
 import tornado.web
 import tornado.ioloop
 import tornado.httpserver
@@ -47,8 +48,9 @@ class Application(tornado.web.Application):
             (r'/wechat2/card/([\S]+)', CradHandler),
             (r'/wechat2/srtp/([\S]+)', SRTPHandler),
             (r'/wechat2/update/([\S]+)/([\S]+)', UpdateHandler),
-            (r'/wechat2/yuyue/([\S]+)',yuyueHandler),
             (r'/wechat2/lecture',LectureHandler),
+            (r'/wechat2/lecturequery',LectureQueryHandler),
+            (r'/wechat2/pedetail/([\S]+)',PeDetailHandler),
 
         ]
         settings = dict(
@@ -103,6 +105,8 @@ class WechatHandler(tornado.web.RequestHandler):
             'exam':self.exam,
             'feedback':self.feedback,
             'tice':self.tice,
+            'vote':self.vote,
+            'app':self.app,
             'nothing': self.nothing
         }
 
@@ -358,6 +362,11 @@ class WechatHandler(tornado.web.RequestHandler):
         msg = get.tice(user)
         self.write(self.wx.response_text_msg(msg))
         self.finish()
+
+    def app(self,user):
+        msg += u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
     # 其他
     def change_user(self, user):
         msg = u'当前用户为：%s \n\n\n<a href="%s/register/%s">点击重新绑定</a>' % (
@@ -367,14 +376,18 @@ class WechatHandler(tornado.web.RequestHandler):
         self.finish()
 
     def help(self, user):
-        msg = u'<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=202009235&idx=1&sn=6659475ca9c4afd40c46b32c6a45ecb2#rd"> =。= 点我查看使用说明 </a>'
+        msg = u'<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=211217347&idx=1&sn=5821c986e24b4e6ce001396819927fdc#rd"> =。= 点我查看使用说明 </a>'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
     def nothing(self, user):
         msg = u'无法识别命令.\n想要调戏小猴别忘了点一下[调戏]\n想要找图书前面别忘了加上"ss"'
+        msg += u'\n输入[考试安排]查询考试安排'
+        msg += u'\n输入[校历]查询当前学期校历'
+        msg += u'\n输入[预约]预约场馆'
         msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=402080773&idx=1&sn=328ae46e08271a42c67488921b39dc9b#rd">点我查看功能列表</a>'
         msg += u'\n<a href="http://115.28.27.150/service/feedback">点我进行反馈哦~</a>'
+        msg += u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
         msg += u'\n么么哒'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
