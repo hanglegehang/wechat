@@ -332,9 +332,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.finish()
     #  弹幕
     def dm(self,user):
-        get.dm(user,self.wx.sub_content)
-        msg = u'发送弹幕成功'
-        self.write(self.wx.response_text_msg(msg))
+        self.write(self.wx.response_text_msg(get.dm(user,self.wx.sub_content)))
         self.finish()
     # 宿舍
     def room(self,user):

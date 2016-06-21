@@ -21,7 +21,6 @@ class LectureHandler(tornado.web.RequestHandler):
     def post(self):
         retjson = {'code':200, 'content':''}
         date = mktime(strptime(strftime('%Y-%m-%d' ,localtime(time())), '%Y-%m-%d'))
-        print date
         # read from db
         try:
             status = self.db.query(LectureDB).filter( LectureDB.date >=  date ).all()
@@ -36,5 +35,4 @@ class LectureHandler(tornado.web.RequestHandler):
                 })
             retjson['content'] = ret
         except Exception,e:
-            print str(e)
             retjson['code'] = 500

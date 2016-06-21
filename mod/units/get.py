@@ -385,26 +385,30 @@ def schoolbus(user):
 
 
 def yuyue(user):
-    msg = u'<a href="http://115.28.27.150/heraldapp/#/yuyue/home">点我进行预约</a>'
+    msg = u'<a href="http://115.28.27.150/heraldapp/#/yuyue/home">点我进行预约</a>近期有同学反馈预约有时会出现问题，如果大家发现，请及时反馈。谢谢大家'
     return msg
 
 
-def dm(user,content):
-    url = u'http://123.57.143.92/'
-    client = HTTPClient()
-    nowtime = int(time.time())
-    data = {
-        'time':nowtime,
+def dm(user,content):                
+    url = u'http://127.0.0.1:8080/'            
+    client = HTTPClient()               
+    nowtime = int(time.time())         
+    data = {            
+        'time':nowtime,            
         'content':content.strip().encode('utf-8'),
-        'movieid':'000000001',
+        'movieid':'000000001', 
         'studentNum':user.cardnum
-    }
-    params = urllib.urlencode(data)
-    request = HTTPRequest(url, method='POST',
+    }             
+                                                             
+    if len(content.strip()) > 200:          
+        return u"弹幕发送失败, 长度过长"                               
+    params = urllib.urlencode(data)         
+    request = HTTPRequest(url, method='POST',    
                           body=params, request_timeout=4)
-    try:
-        response = client.fetch(request)
-    except:
-        pass
+    try:                                     
+        response = client.fetch(request)      
+        return u"弹幕发送成功"                                   
+    except:                                              
+        return u"弹幕发送失败, 请稍后再试"
 
 
