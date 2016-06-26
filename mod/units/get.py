@@ -238,7 +238,7 @@ def lecture(user):
         for d in ret['detial']:
             msg += u"%s\n%s\n\n"%(d['date'], d['place'])
         msg += u'当前人文讲座次数 %s 次' % ret['count']
-        msg += u'\n<a href="http://115.28.27.150/wechat2/lecturequery">点我查询讲座信息~</a>'
+        msg += u'\n<a href="http://www.heraldstudio.com/wechat2/lecturequery">点我查询讲座信息~</a>'
         return msg
     elif response['code'] == 599:
         return u"正在获取最新数据，再点一次就有啦！"
@@ -277,7 +277,7 @@ def lecturenotice(db,user):
             msg += u"> %s\n> %s\n"%(lec['date'], lec['location'])
             msg += u'<a href="%s#%s">戳我查看详细信息</a>\n\n'%(lec['detail'],lec['topic'])
         msg += u"查询讲座次数请在非调戏状态输入[讲座次数]"
-        msg += u'\n<a href="http://115.28.27.150/wechat2/lecturequery">点我查询讲座信息~</a>'
+        msg += u'\n<a href="http://www.heraldstudio.com/wechat2/lecturequery">点我查询讲座信息~</a>'
         return msg
 
 def nic(user):
@@ -385,7 +385,7 @@ def schoolbus(user):
 
 
 def yuyue(user):
-    msg = u'<a href="http://115.28.27.150/heraldapp/#/yuyue/home">点我进行预约</a>近期有同学反馈预约有时会出现问题，如果大家发现，请及时反馈。谢谢大家'
+    msg = u'<a href="http://www.heraldstudio.com/heraldapp/#/yuyue/home">点我进行预约</a>\n近期有同学反馈预约有时会出现问题，如果大家发现，请及时反馈。谢谢大家'
     return msg
 
 

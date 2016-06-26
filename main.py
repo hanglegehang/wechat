@@ -57,7 +57,7 @@ class Application(tornado.web.Application):
             cookie_secret="7CA71A57B571B5AEAC5E64C6042415DE",
             template_path=os.path.join(os.path.dirname(__file__), 'templates'),
             static_path=os.path.join(os.path.dirname(__file__), 'static'),
-            debug=True
+            debug=False
         )
         tornado.web.Application.__init__(self, handlers, **settings)
         self.db = scoped_session(sessionmaker(bind=engine,
@@ -75,7 +75,6 @@ class WechatHandler(tornado.web.RequestHandler):
     def unitsmap(self):
         return {
             'update-curriculum': self.update_curriculum,
-            'today-curriculum': self.today_curriculum,
             'tomorrow-curriculum': self.tomorrow_curriculum,
             'new-curriculum': self.new_curriculum,
             'pe': self.pe_counts,
@@ -97,7 +96,6 @@ class WechatHandler(tornado.web.RequestHandler):
             'quanyi': self.quanyi_info,
             'phylab': self.phylab,
             'grade': self.grade,
-            'ticket': self.ticket,
             'dm':self.dm,
             'room':self.room,
             'yuyue':self.yuyue,
@@ -105,7 +103,6 @@ class WechatHandler(tornado.web.RequestHandler):
             'exam':self.exam,
             'feedback':self.feedback,
             'tice':self.tice,
-            'vote':self.vote,
             'app':self.app,
             'nothing': self.nothing
         }
@@ -128,8 +125,6 @@ class WechatHandler(tornado.web.RequestHandler):
         s = self.wx.check_signature(self.get_argument('signature', default=''),
                                    self.get_argument('timestamp', default=''),
                                    self.get_argument('nonce', default=''))
-        # with open("/var/tmp/t",'w+') as f:
-        #     f.write(s+'\n\n')
         if self.wx.check_signature(self.get_argument('signature', default=''),
                                    self.get_argument('timestamp', default=''),
                                    self.get_argument('nonce', default='')):
@@ -137,16 +132,23 @@ class WechatHandler(tornado.web.RequestHandler):
             try:
                 typelog = "log"
                 if self.wx.msg_type == 'event' and self.wx.event == 'subscribe':
-                    self.write(self.wx.response_text_msg('welcome'))
+                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
                     self.finish()
                 elif self.wx.msg_type == 'text':
                     try:
-                        user = self.db.query(User).filter(
-                            User.openid == self.wx.openid).one()
-                        if user.state == 0:
-                            self.unitsmap[self.wx.content_key(self.wx.content)](user)
-                        elif user.state == 1:
-                            self.simsimi(self.wx.raw_content, user)
+                        key = self.wx.content_key(self.wx.content)
+                        if self.wx.check_user(key):
+                            user = self.db.query(User).filter(
+                                User.openid == self.wx.openid).one()
+                            if user.state == 0:
+                                self.unitsmap[key](user)
+                            elif user.state == 1:
+                                if key=='nothing':
+                                    self.simsimi(self.wx.raw_content, user)
+                                else:
+                                    self.unitsmap[key](user)
+                        else:
+                            self.unitsmap[key](None)
                     except NoResultFound:
                         self.write(self.wx.response_text_msg(
                             u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
@@ -155,10 +157,13 @@ class WechatHandler(tornado.web.RequestHandler):
                 elif self.wx.msg_type == 'event':
                     try:
                         typelog = self.wx.event_key
-                        user = self.db.query(User).filter(
-                            User.openid == self.wx.openid).one()
+                        key = self.wx.event_key
+                        user = None
+                        if self.wx.check_user(key):
+                            user = self.db.query(User).filter(
+                                User.openid == self.wx.openid).one()
                         try:
-                            self.unitsmap[self.wx.event_key](user)
+                             self.unitsmap[key](user)
                         except KeyError:
                             self.finish()
                     except NoResultFound:
@@ -168,12 +173,19 @@ class WechatHandler(tornado.web.RequestHandler):
                         self.finish()
                 elif self.wx.msg_type == 'voice':
                     try:
-                        user = self.db.query(User).filter(
-                            User.openid == self.wx.openid).one()
-                        if user.state == 0:
-                            self.unitsmap[self.wx.content_key(self.wx.voice_content)](user)
-                        elif user.state == 1:
-                            self.simsimi(self.wx.voice_content, user)
+                        key = self.wx.content_key(self.wx.voice_content)
+                        if self.wx.check_user(key):
+                            user = self.db.query(User).filter(
+                                User.openid == self.wx.openid).one()
+                            if user.state == 0:
+                                self.unitsmap[key](user)
+                            elif user.state == 1:
+                                if key=='nothing':
+                                    self.simsimi(self.wx.voice_content, user)
+                                else:
+                                    self.unitsmap[key](user)
+                        else:
+                            self.unitsmap[key](None)
                     except NoResultFound:
                         self.write(self.wx.response_text_msg(
                             u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
@@ -196,11 +208,6 @@ class WechatHandler(tornado.web.RequestHandler):
 
     def update_curriculum(self, user):
         msg = update.curriculum(self.db, user)
-        self.write(self.wx.response_text_msg(msg))
-        self.finish()
-
-    def today_curriculum(self, user):
-        msg = get.curriculum(self.db, user, today())
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
@@ -326,10 +333,6 @@ class WechatHandler(tornado.web.RequestHandler):
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
-    # ticket
-    def ticket(self, user):
-        self.write(ticket_handler(self.wx.ticket_type, user, self.db, self.wx))
-        self.finish()
     #  弹幕
     def dm(self,user):
         self.write(self.wx.response_text_msg(get.dm(user,self.wx.sub_content)))
@@ -345,7 +348,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     def xiaoli(self,user):
-        self.write(self.wx.response_pic_msg(u'校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
+        self.write(self.wx.response_pic_msg(u'2015-16学年校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
         self.finish()
 
     def exam(self,user):
@@ -353,7 +356,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     def feedback(self,user):
-        msg = u'\n<a href="http://115.28.27.150/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
+        msg = u'\n<a href="http://www.heraldstudio.com/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     def tice(self,user):
@@ -369,7 +372,7 @@ class WechatHandler(tornado.web.RequestHandler):
     def change_user(self, user):
         msg = u'当前用户为：%s \n\n\n<a href="%s/register/%s">点击重新绑定</a>' % (
             user.cardnum, LOCAL, self.wx.openid)
-        msg += u'\n<a href="http://115.28.27.150/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
+        msg += u'\n<a href="http://www.heraldstudio.com/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
@@ -383,7 +386,7 @@ class WechatHandler(tornado.web.RequestHandler):
         msg += u'\n输入[考试安排]查询考试安排'
         msg += u'\n输入[校历]查询当前学期校历'
         msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=402080773&idx=1&sn=328ae46e08271a42c67488921b39dc9b#rd">点我查看功能列表</a>'
-        msg += u'\n<a href="http://115.28.27.150/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
+        msg += u'\n<a href="http://www.heraldstudio.com/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
         msg += u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
         msg += u'\n么么哒'
         self.write(self.wx.response_text_msg(msg))

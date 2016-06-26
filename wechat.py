@@ -80,6 +80,46 @@ class Message(object):
         except:
             return u''
 
+    def check_user(self,content):
+        key={
+            'help' : False,
+            'change-user': True,
+            'srtp': True,
+            'play':True,
+            'card':True,
+            'nic':True,
+            'gpa':True,
+            'grade':True,
+            'lecture':True,
+            'lecturenotice':False,
+            'library':True,
+            'searchlib':True
+            'pe':True,
+            'tomorrow-curriculum':True,
+            'new-curriculum':True,
+            'update-curriculum':True,
+            'update-gpa':True,
+            'update-srtp':True,
+            'jwc':True,
+            'schoolbus':True,
+            'phylab':True,
+            'quanyi':False,
+            'yuyue':False,
+            'xiaoli':False,
+            'exam':True,
+            'feedback':True,
+            'tice':True,
+            'app':False,
+            'nothing':True,
+            'room':True,
+            'dm':False
+            }
+        try:
+            return key[content]
+        except KeyError:
+            return False
+
+
     def content_key(self,content):
         key={
             'help' : {'first':'', 'content': [u'怎么用' , u'怎么使用',u'说明']},
@@ -94,6 +134,7 @@ class Message(object):
             'lecturenotice':{'first':u'讲座', 'content': [u'播报',u'列表', u'预告']},
             'library':{'first':u'书', 'content': [u'借阅',u'查询']},
             'pe':{'first':'', 'content': [u'跑操']},
+            'tomorrow-curriculum':{'first':'','content':[u'明日课表']},
             'update-curriculum':{'first':'',u'更新':'', 'content': [u'课表']},
             'update-gpa':{'first':u'更新', 'content': [u'Gpa',u'GPA',u'绩点']},
             'update-srtp':{'first':u'更新', 'content': [u'srtp',u'Srtp',u'SRTP']},
@@ -114,9 +155,6 @@ class Message(object):
         ]
         if not content:
             return 'nothing'
-        if content in ticket:
-            self.ticket_type = ticket.index(content) + 1
-            return 'ticket'
         if content[0:2].lower() == u'ss':
             return 'searchlib'
         if content[0:2].lower() == u'dm':
