@@ -91,9 +91,9 @@ class Message(object):
             'gpa':True,
             'grade':True,
             'lecture':True,
-            'lecturenotice':False,
+            'lecturenotice':True,
             'library':True,
-            'searchlib':True
+            'searchlib':True,
             'pe':True,
             'tomorrow-curriculum':True,
             'new-curriculum':True,

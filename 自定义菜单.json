@@ -51,7 +51,7 @@
                 {
                     "type": "view",
                     "name": "空闲教室",
-                    "url": "http://115.28.27.150/queryEmptyClassrooms/m/index.html"
+                    "url": "http://www.heraldstudio.com/queryEmptyClassrooms/m/index.html"
                 },
                 {
                     "type": "click",
@@ -79,9 +79,9 @@
                     "key": "jwc"
                 },
                 {
-                    "type": "click",
-                    "name": "切换用户",
-                    "key": "change-user"
+                    "type": "view",
+                    "name": "校园信息卡申领",
+                    "url": "http://xyk.js165.com:8000/wapycfd/dndx/login"
                 },
                 {
                     "type": "view",

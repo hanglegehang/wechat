@@ -353,8 +353,8 @@ def schoolbus(user):
         if today() in ['Sat', 'Sun']:
             ret = response['content']['weekend']
         else:
-            ret = response['content']['weekday']
-        msg = u'Tips:\n今天%s\n到地铁站时，乘车途中只上不下。到九龙湖时，乘车途中只下不上\n' % daymap[today()]
+            ret = response['content']['weekend']
+        msg = u'Tips:\n今天%s\n到地铁站时，乘车途中只上不下。到九龙湖时，乘车途中只下不上\n假期按双休日运行\n' % daymap[today()]
         # msg += u'出九龙湖路线：\n校内停车场-->材料学院、图书馆-->文学院-->西门\n-->橘园-->行政楼-->电工电子\n-->梅园-->教八-->北门-->地铁停靠站'
         msg += u'\n前往地铁站:\n'
         for m in ret[u'前往地铁站']:

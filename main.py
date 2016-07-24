@@ -132,7 +132,7 @@ class WechatHandler(tornado.web.RequestHandler):
             try:
                 typelog = "log"
                 if self.wx.msg_type == 'event' and self.wx.event == 'subscribe':
-                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
+                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。新生一卡通号可能还没有正式录入导致无法登陆，请耐心等待。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
                     self.finish()
                 elif self.wx.msg_type == 'text':
                     try:
@@ -318,7 +318,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.finish()
 
     def lecturenotice(self, user):
-        msg = get.lecturenotice(user)
+        msg = get.lecturenotice(self.db,user)
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 
@@ -348,7 +348,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     def xiaoli(self,user):
-        self.write(self.wx.response_pic_msg(u'2015-16学年校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
+        self.write(self.wx.response_pic_msg(u'2016-17学年校历','http://mmbiz.qpic.cn/mmbiz/RmfKVHqzAibS1f3xFqJqxeDkEgFzAlrD0Q4JPjKOgwdkLmtub3NWuLsx78wltCz4bV7b0DoeBG8KRVmR4d8ffKg/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1',u'点击查看详细','http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=400874492&idx=1&sn=2ed0d9882fdc78a3c2e4f5dfc4565802#rd'))
         self.finish()
 
     def exam(self,user):
@@ -365,7 +365,7 @@ class WechatHandler(tornado.web.RequestHandler):
         self.finish()
 
     def app(self,user):
-        msg += u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
+        msg = u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     # 其他
@@ -384,7 +384,7 @@ class WechatHandler(tornado.web.RequestHandler):
     def nothing(self, user):
         msg = u'无法识别命令.\n想要调戏小猴别忘了点一下[调戏]\n想要找图书前面别忘了加上"ss"'
         msg += u'\n输入[考试安排]查询考试安排'
-        msg += u'\n输入[校历]查询当前学期校历'
+        msg += u'\n输入[宿舍]查询当前宿舍信息'
         msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=402080773&idx=1&sn=328ae46e08271a42c67488921b39dc9b#rd">点我查看功能列表</a>'
         msg += u'\n<a href="http://www.heraldstudio.com/service/feedback?cardnum=%s">点我进行反馈哦~</a>' % user.cardnum
         msg += u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
