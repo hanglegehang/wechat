@@ -133,7 +133,7 @@ class WechatHandler(tornado.web.RequestHandler):
             try:
                 typelog = "log"
                 if self.wx.msg_type == 'event' and self.wx.event == 'subscribe':
-                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。新生一卡通号可能还没有正式录入导致无法登陆，请耐心等待。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
+                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。新生一卡通号可能还没有正式录入导致无法登陆，请耐心等待。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>，16级使用前需要先登录my.seu.edu.cn初始化修改密码'))
                     self.finish()
                 elif self.wx.msg_type == 'text':
                     try:
