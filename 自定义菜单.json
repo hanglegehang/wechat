@@ -65,8 +65,8 @@
             "sub_button":[
                 {
                     "type": "click",
-                    "name": "权益服务",
-                    "key": "quanyi"
+                    "name": "新生必点",
+                    "key": "newseu"
                 },
                 {
                     "type": "click",

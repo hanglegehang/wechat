@@ -104,6 +104,7 @@ class WechatHandler(tornado.web.RequestHandler):
             'feedback':self.feedback,
             'tice':self.tice,
             'app':self.app,
+            'newseu':self.newseu,
             'nothing': self.nothing
         }
 
@@ -366,6 +367,14 @@ class WechatHandler(tornado.web.RequestHandler):
 
     def app(self,user):
         msg = u'\n<a href="http://app.heraldstudio.com">点我下载app哦~</a>'
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
+
+    def newseu(self,user):
+        msg = u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=2651223258&idx=2&sn=4355e2e37fcf19374ded26fb1fc4d88b#rd">【新生tips】住</a>'
+        msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=2651223258&idx=3&sn=73a73b453f472a5a6f1f36410f6f0712#rd">【新生tips】行</a>'
+        msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=2651223265&idx=2&sn=4941071e8563065c18ebe25b79999a45#rd">【新生tips】学</a>'
+        msg += u'\n<a href="http://mp.weixin.qq.com/s?__biz=MjM5NDI3NDc2MQ==&mid=2651223265&idx=3&sn=dcbe48b966f75f4a9dcdc678d25a0c54#rd">【新生tips】吃</a>'
         self.write(self.wx.response_text_msg(msg))
         self.finish()
     # 其他

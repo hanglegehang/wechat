@@ -16,7 +16,7 @@ error_map = {
         400 : u'=。= 后台接口错误，请联系小猴君',         # params error
         401 : u'<a href="%s/register/%s">你不是把一卡通密码输错了吧，快点我修改。</a>',                     
                                                      # uuid error
-        500 : u'=。= 出了点故障，不如待会再试试吧',        # server error
+        500 : u'=。= 学校服务器出了点故障，不如待会再试试吧',        # server error
     }
 
 def get_api_return(api_name, user, data={}, timeout=TIME_OUT):

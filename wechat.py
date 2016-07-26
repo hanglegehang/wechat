@@ -112,7 +112,8 @@ class Message(object):
             'app':False,
             'nothing':True,
             'room':True,
-            'dm':False
+            'dm':False,
+            'newseu':False
             }
         try:
             return key[content]
@@ -147,7 +148,8 @@ class Message(object):
             'exam':{'first':'','content':[u'考试安排']},
             'feedback':{'first':'','content':[u'反馈']},
             'tice':{'first':'','content':[u'体测',u'体测成绩',u'体育成绩']},
-            'app':{'first':'','content':['app','App','APP']}
+            'app':{'first':'','content':['app','App','APP']},
+            'newseu':{'first':'','content':[u'新生',u'指南']}
             }
 
         ticket = [
