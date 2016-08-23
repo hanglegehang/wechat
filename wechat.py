@@ -112,6 +112,7 @@ class Message(object):
             'app':False,
             'nothing':True,
             'room':True,
+            'schoolnum':True,
             'dm':False,
             'newseu':False
             }
@@ -149,7 +150,8 @@ class Message(object):
             'feedback':{'first':'','content':[u'反馈']},
             'tice':{'first':'','content':[u'体测',u'体测成绩',u'体育成绩']},
             'app':{'first':'','content':['app','App','APP']},
-            'newseu':{'first':'','content':[u'新生',u'指南']}
+            'newseu':{'first':'','content':[u'新生',u'指南']},
+            'schoolnum':{'first':'','content':[u'学号']}
             }
 
         ticket = [

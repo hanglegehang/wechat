@@ -98,6 +98,7 @@ class WechatHandler(tornado.web.RequestHandler):
             'grade': self.grade,
             'dm':self.dm,
             'room':self.room,
+            'schoolnum':self.schoolnum,
             'yuyue':self.yuyue,
             'xiaoli':self.xiaoli,
             'exam':self.exam,
@@ -133,7 +134,7 @@ class WechatHandler(tornado.web.RequestHandler):
             try:
                 typelog = "log"
                 if self.wx.msg_type == 'event' and self.wx.event == 'subscribe':
-                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。新生一卡通号可能还没有正式录入导致无法登陆，请耐心等待。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
+                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。小猴功能需要绑定才能使用哦。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
                     self.finish()
                 elif self.wx.msg_type == 'text':
                     try:
@@ -152,7 +153,7 @@ class WechatHandler(tornado.web.RequestHandler):
                             self.unitsmap[key](None)
                     except NoResultFound:
                         self.write(self.wx.response_text_msg(
-                            u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
+                            u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>.新生绑定前请务必登录个人信息门户(http://my.seu.edu.cn)修改密码,否则将会无法绑定或者功能无法使用' % (
                                 LOCAL, self.wx.openid)))
                         self.finish()
                 elif self.wx.msg_type == 'event':
@@ -341,6 +342,10 @@ class WechatHandler(tornado.web.RequestHandler):
     # 宿舍
     def room(self,user):
         msg = get.room(user)
+        self.write(self.wx.response_text_msg(msg))
+        self.finish()
+    def schoolnum(self,user):
+        msg = get.schoolnumber(user)
         self.write(self.wx.response_text_msg(msg))
         self.finish()
 

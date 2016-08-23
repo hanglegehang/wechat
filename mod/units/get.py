@@ -155,6 +155,19 @@ def room(user):
         else:
             return response['content']
     
+def schoolnumber(user):
+    response = get_api_return('user',user)
+    if response['code'] == 200:
+        content = response['content']['schoolnum']
+        if content != '00000000':
+            msg = content
+        else:
+            msg = u'暂时没有查到学号哦~'
+        return msg
+    elif response['code'] == 599:
+        return u"正在获取最新数据，再点一次就有啦！"
+    else:
+        return response['content']
 
 def rendered(user):
     response = get_api_return('library', user)

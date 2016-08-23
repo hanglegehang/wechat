@@ -79,9 +79,9 @@
                     "key": "jwc"
                 },
                 {
-                    "type": "view",
-                    "name": "校园信息卡申领",
-                    "url": "http://xyk.js165.com:8000/wapycfd/dndx/login"
+                    "type": "click",
+                    "name": "绑定用户",
+                    "key": "change-user"
                 },
                 {
                     "type": "view",
