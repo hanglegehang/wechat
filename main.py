@@ -63,6 +63,7 @@ class Application(tornado.web.Application):
         self.db = scoped_session(sessionmaker(bind=engine,
                                               autocommit=False, autoflush=True,
                                               expire_on_commit=False))
+        self.requestLog = {}
 
 
 class WechatHandler(tornado.web.RequestHandler):
@@ -134,27 +135,29 @@ class WechatHandler(tornado.web.RequestHandler):
             try:
                 typelog = "log"
                 if self.wx.msg_type == 'event' and self.wx.event == 'subscribe':
-<<<<<<< HEAD
-                    self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。小猴功能需要绑定才能使用哦。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>'))
-=======
                     self.write(self.wx.response_text_msg(u'欢迎关注小猴偷米。新生一卡通号可能还没有正式录入导致无法登陆，请耐心等待。更多精彩请下载<a href="http://app.heraldstudio.com">app</a>，16级使用前需要先登录my.seu.edu.cn初始化修改密码'))
->>>>>>> 686625d2d1ed170a9c26af0db570a2505164e088
                     self.finish()
                 elif self.wx.msg_type == 'text':
                     try:
                         key = self.wx.content_key(self.wx.content)
-                        if self.wx.check_user(key):
-                            user = self.db.query(User).filter(
-                                User.openid == self.wx.openid).one()
-                            if user.state == 0:
-                                self.unitsmap[key](user)
-                            elif user.state == 1:
-                                if key=='nothing':
-                                    self.simsimi(self.wx.raw_content, user)
-                                else:
-                                    self.unitsmap[key](user)
+                        currentTime = time()
+                        if self.wx.openid in self.application.requestLog and currentTime - self.application.requestLog[self.wx.openid] < 1:
+                            self.write(self.wx.response_text_msg(u'正在查询'))
+                            self.finish()
                         else:
-                            self.unitsmap[key](None)
+                            self.application.requestLog[self.wx.openid] = currentTime
+                            if self.wx.check_user(key):
+                                user = self.db.query(User).filter(
+                                    User.openid == self.wx.openid).one()
+                                if user.state == 0:
+                                    self.unitsmap[key](user)
+                                elif user.state == 1:
+                                    if key=='nothing':
+                                        self.simsimi(self.wx.raw_content, user)
+                                    else:
+                                        self.unitsmap[key](user)
+                            else:
+                                self.unitsmap[key](None)
                     except NoResultFound:
                         self.write(self.wx.response_text_msg(
                             u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>.新生绑定前请务必登录个人信息门户(http://my.seu.edu.cn)修改密码,否则将会无法绑定或者功能无法使用' % (
@@ -165,13 +168,19 @@ class WechatHandler(tornado.web.RequestHandler):
                         typelog = self.wx.event_key
                         key = self.wx.event_key
                         user = None
-                        if self.wx.check_user(key):
-                            user = self.db.query(User).filter(
-                                User.openid == self.wx.openid).one()
-                        try:
-                             self.unitsmap[key](user)
-                        except KeyError:
+                        currentTime = time()
+                        if self.wx.openid in self.application.requestLog and currentTime - self.application.requestLog[self.wx.openid] < 1:
+                            self.write(self.wx.response_text_msg(u'正在查询'))
                             self.finish()
+                        else:
+                            self.application.requestLog[self.wx.openid] = currentTime
+                            if self.wx.check_user(key):
+                                user = self.db.query(User).filter(
+                                    User.openid == self.wx.openid).one()
+                            try:
+                                 self.unitsmap[key](user)
+                            except KeyError:
+                                self.finish()
                     except NoResultFound:
                         self.write(self.wx.response_text_msg(
                             u'<a href="%s/register/%s">=。= 不如先点我绑定一下？</a>' % (
